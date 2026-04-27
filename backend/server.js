@@ -14,7 +14,10 @@ const rateLimit = require("express-rate-limit");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://interview-project-mern-br45.vercel.app",
+  credentials: true
+}));
 app.use(express.json());
 
 ConnectDB();
@@ -30,7 +33,7 @@ app.use('/api/resume', resumeRoutes);
 const server = http.createServer(app); 
 const io = new Server(server, {
     cors: { 
-        origin: "http://localhost:5173",
+        origin: "https://interview-project-mern-br45.vercel.app",
         methods: ["GET", "POST"],
         credentials: true
     }
