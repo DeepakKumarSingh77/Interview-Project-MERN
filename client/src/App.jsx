@@ -18,7 +18,7 @@ function App() {
     try {
       setStatus('loading');
       setStatusMsg('Analyzing your resume...');
-      const response = await axios.post('http://localhost:5000/api/resume/upload', formData);
+      const response = await axios.post('https://ai-interview-backend-71pa.onrender.com/api/resume/upload', formData);
       if (response.status === 200) {
         setStatus('success');
         setStatusMsg('Resume indexed successfully!');
