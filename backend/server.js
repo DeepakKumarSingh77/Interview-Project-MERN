@@ -23,6 +23,8 @@ if (!fs.existsSync(uploadDir)) {
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: "https://interview-project-mern-br45.vercel.app",
   credentials: true
