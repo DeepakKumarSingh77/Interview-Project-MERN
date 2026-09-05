@@ -372,31 +372,131 @@ function buildGraph(checkpointer) {
 }
 
 // ================= EXPORT: INIT INTERVIEW =================
+// exports.initializeInterview = async (socket) => {
+//     try {
+//         // console.log("STEP 1: Starting interview, socket:", socket.id);
+
+//         clearSession(socket.id);
+//         const graph = getSessionGraph(socket.id);
+//         socket.threadId = `${socket.id}_${Date.now()}`;
+
+//         const db = await getDB();
+//         const meta = await db.collection("resume_meta").findOne({});
+
+//         if (!meta) {
+//             socket.emit("error", "No resume found. Please upload first.");
+//             return;
+//         }
+
+//         const resumeContext = meta.fullText;
+//         // console.log("STEP 2: Resume loaded, chars:", resumeContext.length);
+//         // console.log("STEP 2.5: Top:", resumeContext.slice(0, 200));
+
+//         const candidateName = await extractCandidateName(resumeContext);
+//         // console.log("STEP 3: Name:", candidateName);
+
+//         const level = await detectCandidateLevel(resumeContext);
+//         // console.log("STEP 3.5: Level:", level);
+
+//         const config = {
+//             configurable: {
+//                 thread_id: socket.threadId,
+//                 socket,
+//             }
+//         };
+
+//         await graph.invoke({
+//             resumeContext,
+//             candidateName,
+//             questionCount: 0,
+//             phase: "intro",
+//             messages: [],
+//             level,
+//         }, config);
+
+//         // console.log("STEP 4: Intro done, waiting for candidate");
+
+//     } catch (err) {
+//         // console.error("Init Error:", err.message);
+//         socket.emit("error", "Failed to start interview.");
+//     }
+// };
+
 exports.initializeInterview = async (socket) => {
     try {
-        // console.log("STEP 1: Starting interview, socket:", socket.id);
+
+        console.log("=================================");
+        console.log("🚀 STARTING INTERVIEW");
+        console.log("Socket ID:", socket.id);
+        console.log("=================================");
+
+        console.log("STEP 1: Clearing old session...");
 
         clearSession(socket.id);
+
         const graph = getSessionGraph(socket.id);
+
         socket.threadId = `${socket.id}_${Date.now()}`;
 
+        console.log("STEP 2: Graph created");
+        console.log("Thread ID:", socket.threadId);
+
+
+        console.log("STEP 3: Connecting to database...");
+
         const db = await getDB();
+
+        console.log("STEP 4: Database connected");
+
+
+        console.log("STEP 5: Finding resume...");
+
         const meta = await db.collection("resume_meta").findOne({});
 
+        console.log("STEP 6: Resume found:", !!meta);
+
+
         if (!meta) {
-            socket.emit("error", "No resume found. Please upload first.");
+            console.log("❌ NO RESUME FOUND");
+
+            socket.emit(
+                "error",
+                "No resume found. Please upload first."
+            );
+
             return;
         }
 
+
         const resumeContext = meta.fullText;
-        // console.log("STEP 2: Resume loaded, chars:", resumeContext.length);
-        // console.log("STEP 2.5: Top:", resumeContext.slice(0, 200));
 
-        const candidateName = await extractCandidateName(resumeContext);
-        // console.log("STEP 3: Name:", candidateName);
+        console.log(
+            "STEP 7: Resume loaded. Characters:",
+            resumeContext.length
+        );
 
-        const level = await detectCandidateLevel(resumeContext);
-        // console.log("STEP 3.5: Level:", level);
+
+        console.log("STEP 8: Extracting candidate name...");
+
+        const candidateName =
+            await extractCandidateName(resumeContext);
+
+        console.log(
+            "STEP 9: Candidate name:",
+            candidateName
+        );
+
+
+        console.log("STEP 10: Detecting candidate level...");
+
+        const level =
+            await detectCandidateLevel(resumeContext);
+
+        console.log(
+            "STEP 11: Candidate level:",
+            level
+        );
+
 
         const config = {
             configurable: {
@@ -405,20 +505,37 @@ exports.initializeInterview = async (socket) => {
             }
         };
 
-        await graph.invoke({
-            resumeContext,
-            candidateName,
-            questionCount: 0,
-            phase: "intro",
-            messages: [],
-            level,
-        }, config);
 
-        // console.log("STEP 4: Intro done, waiting for candidate");
+        console.log("STEP 12: Starting LangGraph...");
+
+
+        await graph.invoke(
+            {
+                resumeContext,
+                candidateName,
+                questionCount: 0,
+                phase: "intro",
+                messages: [],
+                level,
+            },
+            config
+        );
+
+
+        console.log("✅ STEP 13: INTERVIEW INTRO COMPLETED");
+
 
     } catch (err) {
-        // console.error("Init Error:", err.message);
-        socket.emit("error", "Failed to start interview.");
+
+        console.error("=================================");
+        console.error("❌ INTERVIEW START ERROR");
+        console.error(err);
+        console.error("=================================");
+
+        socket.emit(
+            "error",
+            "Failed to start interview."
+        );
     }
 };
 
