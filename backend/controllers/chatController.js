@@ -588,6 +588,8 @@ exports.handleInterview = async (socket, userMessage) => {
         }
     } catch (err) {
         // console.error("Chat Error:", err.message);
+        console.error("❌ CHAT ERROR:", err);
+        socket.emit("error", "Failed to process your answer.");
     }
 };
 
