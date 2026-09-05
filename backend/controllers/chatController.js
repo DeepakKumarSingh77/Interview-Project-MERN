@@ -8,6 +8,11 @@ const { InterviewState } = require("../state");
 const { MongoDBAtlasVectorSearch } = require("@langchain/mongodb");
 const { GoogleGenerativeAIEmbeddings } = require("@langchain/google-genai");
 
+console.log(
+    "🤖 GROQ API KEY:",
+    process.env.GROQ_API_KEY ? "LOADED" : "MISSING"
+);
+
 // ================= LLM =================
 const llm = new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
