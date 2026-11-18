@@ -16,7 +16,7 @@ console.log(
 // ================= LLM =================
 const llm = new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
-    model: "openai/gpt-oss-20b",
+    model: "openai/gpt-oss-120b",
     streaming: true,
     maxTokens: 300,
 });
